@@ -204,13 +204,36 @@ where A is a $ n x n$ matrix, u is a $n x 1$ vector, b($\tau$) is a $n x 1$ vect
 \begin{equation*}
     A = \frac{1}{h^2} 
 \begin{bmatrix}
-    -2 & 1 & \dots  \\
-    1 & -2 & 1 & \dots \\
-    \vdots & \vdots & \ddots \\
-    \vdots & \vdots & \vdots & \ddots \\
-    \dots & 1 & -2 & 1 \\
-    \dots & \dots & 2 & -2
+    -2     &  1     &  0     &  0     & \dots  &  0     \\
+    1      & -2     &  1     &  0     & \dots  &  0     \\
+    0      &  1     & -2     &  1     & \dots  &  0     \\
+    \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
+    0      & \dots  &  1     & -2     &  1     &  0     \\
+    0      & \dots  &  0     &  1     & -2     &  1     \\
+    0      & \dots  &  0     &  0     &  2     & -2
 \end{bmatrix}
+\end{equation*}
+and
+\begin{equation*}
+  b(\tau) =
+  \begin{bmatrix}
+    \frac{\alpha(\tau)}{h^2} \\
+    0                        \\
+    0                        \\
+    \vdots                   \\
+    0
+  \end{bmatrix}
+\end{equation*}
+and
+\begin{equation*}
+  u_0 =
+  \begin{bmatrix}
+    1      \\
+    0      \\
+    0      \\
+    \vdots \\
+    0
+  \end{bmatrix}
 \end{equation*}
 
 \end{document}
