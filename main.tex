@@ -107,17 +107,17 @@ with boundary conditions
 \begin{equation*} 
    u(0,\tau)= 
 \begin{cases}
-    T_0,           & 0 \leq t \leq t_P, \\
-    0,              & t > t_P,
+    \frac{T_0}{T_0} = 1,           & 0 \leq \tau \leq \frac{t_P}{t_P}, \\
+    0,              & \tau > 1,
 \end{cases}
-   \hspace{0.8cm}         \frac{\partial T}{\partial x}(L,t)=0,
+   \hspace{0.8cm}         \frac{\partial u}{\partial \xi}(1,\tau) = 0,
 \end{equation*}
 and initial conditions
 \begin{equation*} 
-   T(x,0)= 
+   u(\xi,0) = 
 \begin{cases}
-    T_0,           & x=0, \\
-    0,              & 0 < x \leq L
+    \frac{T_0}{T_0} = 1,           & \xi = 0, \\
+    0,              & 0 < \xi \leq \frac{L}{L}=1
 \end{cases}
 \end{equation*}
 
