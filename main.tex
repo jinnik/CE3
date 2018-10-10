@@ -131,6 +131,22 @@ with expression $a$ as
 and assuming $a$ has a numerical value of 1.
 
 \section{Discretization}
+\tikzstyle{circ} = [circle, draw, fill=blue!20]
+\tikzstyle{line} = [draw, -latex']
+\begin{figure}
+  \centering
+  \begin{tikzpicture}[node distance = 2cm, auto]
+    \node [circ              , label={below:$u_{i-1}^{j}$}] (i-1) {};
+    \node [circ, right of=i-1, label={below:$u_{i}^{j}$} ] (i)   {};
+    \node [circ, right of=i  , label={below:$u_{i+1}^{j}$}] (i+1) {};
+    \node [circ, above of=i  , label={above:$u_{i}^{j+1}$}] (j)   {};
+    \draw (i-1) -- (i) -- (i+1);
+    \draw (i) -- (j);
+  \end{tikzpicture}
+  \caption{Schematic overview of points used in method}
+  \label{fig:stencil}
+\end{figure}
+
 
 The semidiscretization approach is used. Using constant stepsize $h$ and space discretization into $n$ space:
 \begin{equation*}
@@ -228,7 +244,8 @@ and
 \begin{equation*}
   u_0 =
   \begin{bmatrix}
-    1      \\
+  % 1      \\ % u(0,\tau) isn't part of the u vector so shouldn't be included
+  % in u_0?
     0      \\
     0      \\
     \vdots \\
