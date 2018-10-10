@@ -2,15 +2,7 @@ clear all;
 close all;
 
 N_x = 10;
-
 h_x = 1/N_x;
-
-tau = 0;
-
-U =    ones(N_x, 1);
-D = -2*ones(N_x, 1);
-L =    ones(N_x, 1);
-L(end) = 2;
 
 A = zeros(N_x,N_x);
 A(1,1) = -2;
@@ -95,11 +87,43 @@ print3_data('part3_unstable_plot.csv', x, t, U)
 %% Comparing matlab solvers
 
 du = @(t, u) [A*u + 1/h_x^2 * b(t)];
-
+tic
 [T,Y] = ode23(du, [0 2], u_0);
+time_ode23 = toc;
 ux_0 = arrayfun(alpha, T);
 
 Y = [ux_0 Y];
-figure()
 
-surf(Y)
+tic
+[Ts,Ys] = ode23s(du, [0 2], u_0);
+time_ode23s = toc;
+ux_0 = arrayfun(alpha, Ts);
+Ys = [ux_0 Ys];
+disp('Solver stats: ')
+disp(['N_t for ode23: '            num2str(length(T))    ])
+disp(['N_t for ode23s: '           num2str(length(Ts))   ])
+disp(['time for ode23: '           num2str(time_ode23)   ])
+disp(['time for ode23s: '          num2str(time_ode23s)  ])
+disp(['max time step for ode23: '  num2str(max(diff(T))) ])
+disp(['max time step for ode23s: ' num2str(max(diff(Ts)))])
+
+fprintf('%s %s %s %s\r\n', '$N$', 'timesteps' ,'CPU-time', '$\Delta t_{max}$')
+
+% Work in progress..
+if 0
+for N_x = [10 20 40]
+    du = build_du(N_x);
+    % du = @(t, u) [A*u + N_x^2 * b(t)];
+
+    tic
+    [T,Y] = ode23(du, [0 2], u_0); % Could use feval to choose between
+                                   % ode23 and ode23s
+    time_ode23 = toc;
+    tic
+    [Ts,Ys] = ode23s(du, [0 2], u_0);
+    time_ode23s = toc;
+
+    fprintf('%d %f %f %f %f %f %f\r\n', N, length(T), length(Ts), time_ode23, ...
+            time_ode23s, max(diff(T)), max(diff(Ts)));
+end
+end
