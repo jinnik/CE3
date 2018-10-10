@@ -12,9 +12,6 @@ D = -2*ones(N_x, 1);
 L =    ones(N_x, 1);
 L(end) = 2;
 
-% How did spdiags work again?!
-% A = spdiags([U D L], [1 0 -1])
-
 A = zeros(N_x,N_x);
 A(1,1) = -2;
 A(1,2) = 1;
@@ -34,8 +31,9 @@ b = @(t) [alpha(t); zeros(N_x-1, 1)];
 
 u_0 = zeros(N_x,1);
 
-N_t = 1000;
+% Stable plot:
 h_t = 0.5*h_x^2;
+N_t = round(2/h_t);
 U = zeros(N_x,N_t+1);
 U(:,1) = u_0;
 
@@ -47,8 +45,36 @@ for k = 1:N_t
 end
 
 U = [[1 ux_0]; U];
+surf(U)
+disp('Stable:')
+disp(['h_x = ' num2str(h_x)])
+disp(['h_t = ' num2str(h_t)])
+disp(['C = ' num2str(h_t/h_x^2)])
+t = linspace(0, 2, N_t+1);
+x = linspace(0, 1, N_x+1);
+print_data('stable_plot.csv', x, t, U)
 
-if 1
+% Unstable plot:
+h_t = 1*h_x^2;
+N_t = round(2/h_t);
+U = zeros(N_x,N_t+1);
+U(:,1) = u_0;
+
+for k = 1:N_t
+    ux_0(k) = alpha(k*h_t);
+    U(:,k+1) = U(:,k) + h_t * A * U(:,k) + h_t / h_x^2 * b(k*h_t);
+end
+figure()
+surf(U)
+disp('Unstable:')
+disp(['h_x = ' num2str(h_x)])
+disp(['h_t = ' num2str(h_t)])
+disp(['C = ' num2str(h_t/h_x^2)])
+
+t = linspace(0, 2, N_t+1);
+x = linspace(0, 1, N_x);
+print_data('unstable_plot.csv', x, t, U)
+
 %% Comparing with matlab solvers
 
 du = @(t, u) [A*u + 1/h_x^2 * b(t)];
@@ -63,5 +89,6 @@ for i = 1:length(T)
 end
 
 Y = [ux_0 Y];
+figure()
 
-end
+surf(Y)

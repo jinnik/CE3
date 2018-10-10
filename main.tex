@@ -253,4 +253,42 @@ and
   \end{bmatrix}
 \end{equation*}
 
+
+\section{Results}
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}
+      [
+        xlabel style = {sloped},
+        ylabel style = {sloped},
+        xlabel = {Dimensionless time},
+        ylabel = {Dimensionless space},
+        zlabel = {Dimensionless temperature},
+      ]
+      \addplot3 [surf, mesh/ordering=y varies] table {stable_plot.csv};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Stable plot with $\Delta t = 0.005$, $\Delta x = 0.1$ and the
+    Courant number $0.5$.}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}
+      [
+        xlabel style = {sloped},
+        ylabel style = {sloped},
+        xlabel = {Dimensionless time},
+        ylabel = {Dimensionless space},
+        zlabel = {Dimensionless temperature},
+      ]
+      \addplot3 [surf, mesh/ordering=y varies] table {unstable_plot.csv};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Unstable plot with $\Delta t = 0.01$, $\Delta x = 0.1$ and the
+    Courant number $1$.}
+\end{figure}
+
 \end{document}
