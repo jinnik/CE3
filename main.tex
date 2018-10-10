@@ -56,7 +56,7 @@ The following partial differential equation is given:
 \rho c_p \frac{\partial T}{\partial t} = \kappa \frac{\partial^2 T}{\partial x^2}
 \end{equation}
 with boundary conditions
-\begin{equation} \label{eq1}
+\begin{equation} \label{eq2}
    T(0,t)= 
 \begin{cases}
     T_0,           & 0 \leq t \leq t_P, \\
@@ -65,7 +65,7 @@ with boundary conditions
    \hspace{0.8cm}         \frac{\partial T}{\partial x}(L,t)=0,
 \end{equation}
 and initial conditions
-\begin{equation} \label{eq1}
+\begin{equation} \label{eq3}
    T(x,0)= 
 \begin{cases}
     T_0,           & x=0, \\
@@ -138,11 +138,11 @@ The semidiscretization approach is used. Using constant stepsize $h$ and space d
 \end{equation*}
 We approximate
 \begin{equation*}
-    u_i(t) \approx u(\xi_i,t)
+    u_i(\tau) \approx u(\xi_i,\tau)
 \end{equation*}
 and discretize $u_{\xi \xi}$ with approximation of order 2
 \begin{equation*}
-    u_{\xi \xi}(t,\xi_i) \approx \frac{u_{i-1}(t) - 2u_i(t) + u_{i+1}(t)}{h^2} + 0(h^2) \hspace{0.8cm} i = 1, ..., n
+    u_{\xi \xi}(\tau,\xi_i) \approx \frac{u_{i-1}(\tau) - 2u_i(\tau) + u_{i+1}(\tau)}{h^2} + 0(h^2) \hspace{0.8cm} i = 1, ..., n
 \end{equation*}
 and so
 \begin{equation*}
@@ -200,7 +200,7 @@ These can be written in the form
 \begin{equation*}
     \frac{d u}{d \tau} = Au + b(\tau), \hspace{0.8cm} u(0) = u_0
 \end{equation*}
-where A is a $ n x n$ matrix, u is a $n x 1$ vector, b($\tau$) is a $n x 1$ vector and $u_0$ is a $n x 1$ vector:
+where A is a $n$ x $n$ matrix, u is a $n$ x 1 vector, b($\tau$) is a $n$ x 1 vector and $u_0$ is a $n$ x 1 vector:
 \begin{equation*}
     A = \frac{1}{h^2} 
 \begin{bmatrix}
@@ -215,9 +215,9 @@ where A is a $ n x n$ matrix, u is a $n x 1$ vector, b($\tau$) is a $n x 1$ vect
 \end{equation*}
 and
 \begin{equation*}
-  b(\tau) =
+  b(\tau) = \frac{1}{h^2} 
   \begin{bmatrix}
-    \frac{\alpha(\tau)}{h^2} \\
+    \alpha(\tau) \\
     0                        \\
     0                        \\
     \vdots                   \\
