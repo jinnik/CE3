@@ -1,10 +1,7 @@
-function print_data(filename, t, x, U)
-fid = fopen(filename, 'w');
-for j = 1:length(x)
-    for i = 1:length(t)
-        fprintf(fid, '%f %f %f\r\n', x(j), t(i), U(i,j)); %, i, j, U(i,j));
+function print_data(filename, t, U)
+    fid = fopen(filename, 'w');
+    for i=1:length(U)
+        fprintf(fid, [repmat('%.9f ', 1, length(U(1,:))) '%.9f\n'], t(i), U(i, :));
     end
-    fprintf(fid, '\r\n');
-end
-fclose(fid);
+    fclose(fid);
 end
