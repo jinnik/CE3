@@ -12,14 +12,15 @@ D = -2*ones(N_x, 1);
 L =    ones(N_x, 1);
 L(end) = 2;
 
-A = zeros(N_x,N_x);
-A(1,1) = -2;
-A(1,2) = 1;
-A(2,1) = 1;
+A = zeros(N_x+1,N_x+1);
+A(1,1) = 1;
+A(2,2) = -2;
+A(2,3) = 1;
+A(3,2) = 1;
 for i = 2:N_x-1
-    A(i,i) = -2;
-    A(i,i+1) = 1;
-    A(i+1,i) = 1;
+    A(i+1,i+1) = -2;
+    A(i+1,i+2) = 1;
+    A(i+2,i+1) = 1;
 end
 A(end,end-1) = 2;
 A(end,end) = -2;
@@ -27,14 +28,14 @@ A(end,end) = -2;
 A = 1/h_x^2*A;
 
 alpha = @(t) t <= 1;
-b = @(t) [alpha(t); zeros(N_x-1, 1)];
+b = @(t) [0; alpha(t); zeros(N_x-1, 1)];
 
-u_0 = zeros(N_x,1);
+u_0 = [zeros(N_x+1,1)];
 
 %% Stable plot:
 h_t = 0.5*h_x^2;
 N_t = round(2/h_t);
-U = zeros(N_x,N_t+1);
+U = zeros(N_x+1,N_t+1);
 U(:,1) = u_0;
 
 t = linspace(0, 2, N_t+1);
