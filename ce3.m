@@ -4,23 +4,9 @@ close all;
 N_x = 10;
 h_x = 1/N_x;
 
-A = zeros(N_x,N_x);
-A(1,1) = -2;
-A(1,2) = 1;
-A(2,1) = 1;
-for i = 2:N_x-1
-    A(i,i) = -2;
-    A(i,i+1) = 1;
-    A(i+1,i) = 1;
-end
-A(end,end-1) = 2;
-A(end,end) = -2;
-
-A = 1/h_x^2*A;
-
 alpha = @(t) t <= 1;
-b = @(t) [alpha(t); zeros(N_x-1, 1)];
 
+[A, b, ~] = build_A_du(N_x);
 u_0 = zeros(N_x,1);
 
 %% Stable plot:
@@ -83,47 +69,31 @@ t = linspace(0, 2, N_t+1);
 x = linspace(0, 1, N_x);
 print3_data('part3_unstable_plot.csv', x, t, U)
 
-
+disp(' ')
 %% Comparing matlab solvers
 
-du = @(t, u) [A*u + 1/h_x^2 * b(t)];
-tic
-[T,Y] = ode23(du, [0 2], u_0);
-time_ode23 = toc;
-ux_0 = arrayfun(alpha, T);
-
-Y = [ux_0 Y];
-
-tic
-[Ts,Ys] = ode23s(du, [0 2], u_0);
-time_ode23s = toc;
-ux_0 = arrayfun(alpha, Ts);
-Ys = [ux_0 Ys];
-disp('Solver stats: ')
-disp(['N_t for ode23: '            num2str(length(T))    ])
-disp(['N_t for ode23s: '           num2str(length(Ts))   ])
-disp(['time for ode23: '           num2str(time_ode23)   ])
-disp(['time for ode23s: '          num2str(time_ode23s)  ])
-disp(['max time step for ode23: '  num2str(max(diff(T))) ])
-disp(['max time step for ode23s: ' num2str(max(diff(Ts)))])
-
-fprintf('%s %s %s %s\r\n', '$N$', 'timesteps' ,'CPU-time', '$\Delta t_{max}$')
-
-% Work in progress..
-if 0
+solvers = {'ode23', 'ode23s'};
+delete('part4_solver_comparison.csv')
+custom_fprintf('part4_solver_comparison.csv', '%s;%s;%s;%s;%s;%s;%s\r\n', ...
+               'N', [solvers{1} ' timesteps'], [solvers{2} ' timesteps'], ...
+               [solvers{1} ' CPU-time'], [solvers{2} ' CPU-time'], ...
+               [solvers{1} ' Delta tmax'], [solvers{2} ' Delta tmax'])
+options = odeset('RelTol',1e-6, 'AbsTol',1e-6);
 for N_x = [10 20 40]
-    du = build_du(N_x);
-    % du = @(t, u) [A*u + N_x^2 * b(t)];
-
-    tic
-    [T,Y] = ode23(du, [0 2], u_0); % Could use feval to choose between
-                                   % ode23 and ode23s
-    time_ode23 = toc;
-    tic
-    [Ts,Ys] = ode23s(du, [0 2], u_0);
-    time_ode23s = toc;
-
-    fprintf('%d %f %f %f %f %f %f\r\n', N, length(T), length(Ts), time_ode23, ...
-            time_ode23s, max(diff(T)), max(diff(Ts)));
-end
+    [~, ~, du] = build_A_du(N_x);
+    u_0 = zeros(N_x,1);
+    time = zeros(1,2);
+    T = {[], []}; Y = {[], []};
+    i = 1;
+    for solver = solvers
+        tic
+        [T{i}, Y{i}] = feval(solver{:}, du, [0 2], u_0, options);
+        ux_0 = arrayfun(alpha, T{i});
+        Y{i} = [ux_0 Y{i}];
+        time(i) = toc;
+        i = i+1;
+    end
+    custom_fprintf('part4_solver_comparison.csv', '%d;%d;%d;%f;%f;%f;%f\r\n', ...
+                   N_x, length(T{1}), length(T{2}), ...
+            time(1), time(2), max(diff(T{1})), max(diff(T{2})));
 end
