@@ -329,8 +329,10 @@ Figure~\ref{2dplots} shows the temperature profiles along the rod when $\tau = 0
 The ODE problem is then solved with two MATLAB solvers: the explicit method ode23 and the implicit method ode23s which is suitable for stiff problems. Three stepsizes $h$ are taken corresponding to gridpoints $N = 10, 20, 40$ and $\tau$ of 0 to 2 is the time interval. The following table is the comparison of number of time steps, CPU time and maximal stepsize each method could take:
 
 The number of time steps for the implicit solver (ode23s) is smaller than for the explicit solver (ode23). As the explicit solver requires more time steps for large numbers of stepsizes, the CPU time is longer. It is to fullfill the stability criteria. On the other hand, implicit method is unconditionally stable for every time step. 
-
+\begin{table}[]
+ \caption{Comparison of ode23 and ode23s with a relative tolerance of $10^{-6}$ and an absolute tolerance of $10^{-6}$.}
 \pgfplotstabletypeset[col sep=semicolon]{part4_solver_comparison.csv}
+\end{table}
 
 \section{Optimized MATLAB Solvers}
 
