@@ -85,49 +85,49 @@ $\kappa$ is the thermal conductivity [\si{\joule\per\meter\per\second\per\kelvin
 
 \noindent
 2. Rewrite differential equations in those variables
-\begin{equation*}
+\begin{equation}
 \begin{split}
     \frac{\partial T}{\partial t} &= \frac{T_0}{t_P} \frac{\partial u}{\partial \tau} \\
     \frac{\partial}{\partial x} &= \frac{1}{L} \frac{\partial}{\partial \xi} \\
     \frac{\partial^2 T}{\partial x^2} &= \frac{T_0}{L^2} \frac{\partial^2 u}{\partial \xi^2}
 \end{split}
-\end{equation*}
+\end{equation}
 Rewrite Equation~\ref{eq1} into
-\begin{equation*}
+\begin{equation}
 \begin{split}
     \rho c_p \frac{\partial u}{\partial \tau} &= \kappa \frac{T_0}{L^2} \frac{\partial^2 u}{\partial \xi^2} \\
     \frac{\partial u}{\partial \tau} &= \frac{\kappa t_p}{\rho c_p L^2} \frac{\partial^2 u}{\partial \xi^2}
 \end{split}
-\end{equation*}
+\end{equation}
 and therefore can be transformed into the following dimensionless form
-\begin{equation*}
+\begin{equation}
     \frac{\partial u}{\partial \tau} = a \frac{\partial^2 u}{\partial \xi^2}, \hspace{0.8cm} \tau > 0, \hspace{0.8cm} 0 < \xi < \frac{L}{L}=1
-\end{equation*}
+\end{equation}
 with boundary conditions
-\begin{equation*} 
+\begin{equation}   \label{BC}
    u(0,\tau)= 
 \begin{cases}
     \frac{T_0}{T_0} = 1,           & 0 \leq \tau \leq \frac{t_P}{t_P}, \\
     0,              & \tau > 1,
 \end{cases}
    \hspace{0.8cm}         \frac{\partial u}{\partial \xi}(1,\tau) = 0,
-\end{equation*}
+\end{equation}
 and initial conditions
-\begin{equation*} 
+\begin{equation} 
    u(\xi,0) = 
 \begin{cases}
     \frac{T_0}{T_0} = 1,           & \xi = 0, \\
     0,              & 0 < \xi \leq \frac{L}{L}=1
 \end{cases}
-\end{equation*}
+\end{equation}
 with expression $a$ as
-\begin{equation*}
+\begin{equation}
 \begin{split}
     a &= \frac{\kappa t_P}{\rho c_p L^2} \\
     [a] &= \si{\joule\per\meter\per\second\per\kelvin\second\meter\cubed\per\kilo\gram\kilo\gram\kelvin\per\joule}%\frac{J}{m \cdot s \cdot C} \cdot s \cdot \frac{m^3}{kg} \frac{kg \cdot C}{J} \frac{1}{m^2} 
     = 1
 \end{split}
-\end{equation*}
+\end{equation}
 and assuming $a$ has a numerical value of 1.
 
 \section{Discretization}
@@ -150,75 +150,75 @@ and assuming $a$ has a numerical value of 1.
 
 
 The semidiscretization approach is used. Using constant stepsize $h$ and space discretization into $n$ space:
-\begin{equation*}
+\begin{equation}
     \xi_i = i \cdot h \hspace{0.8cm} \text{where}  \hspace{0.8cm} 1 \leq i \leq n 
-\end{equation*}
+\end{equation}
 We approximate
-\begin{equation*}
+\begin{equation}
     u_i(\tau) \approx u(\xi_i,\tau)
-\end{equation*}
+\end{equation}
 and discretize $u_{\xi \xi}$ with approximation of order 2
-\begin{equation*}
+\begin{equation}
     u_{\xi \xi}(\tau,\xi_i) \approx \frac{u_{i-1}(\tau) - 2u_i(\tau) + u_{i+1}(\tau)}{h^2} + 0(h^2) \hspace{0.8cm} i = 1, ..., n
-\end{equation*}
+\end{equation}
 and so
-\begin{equation*}
+\begin{equation}
     \frac{d u_i}{d\tau} = \frac{u_{i-1} - 2u_i + u_{i+1}}{h^2}  \hspace{0.8cm} i = 2, ..., n-1
-\end{equation*}
+\end{equation}
 As for the boundary conditions at $i = 1$
-\begin{equation*}
+\begin{equation}
     \frac{d u_1}{d\tau} = \frac{\alpha(\tau) - 2u_1 + u_{2}}{h^2}  \hspace{0.8cm} i = 1
-\end{equation*}
+\end{equation}
 where 
-\begin{equation*} 
+\begin{equation} 
   \alpha(\tau)= 
 \begin{cases}
     1,           & 0 \leq \tau \leq 1, \\
     0,              & \tau > 1,
 \end{cases}
-\end{equation*}
+\end{equation}
 and at $i = n$, a ghost point is used, and so
-\begin{equation*}
+\begin{equation}
     \frac{d u_n}{d\tau} = \frac{u_{n-1} - 2u_n + u_{n+1}}{h^2}  \hspace{0.8cm} i = n
-\end{equation*}
+\end{equation}
 Given the Newman boundary condition
-\begin{equation*}
+\begin{equation}
     \frac{\partial u}{\partial \xi} (1,\tau) = 0
-\end{equation*}
+\end{equation}
 which can be discretized in the form
-\begin{equation*}
+\begin{equation}
 \begin{split}
         \frac{\partial u}{\partial \xi} (1,\tau) &= \frac{u(1+h,\tau)-u(1-h,\tau)}{2h} + 0(h^2)\\
          \frac{\partial u}{\partial \xi} (1,\tau) &= \frac{u_{n+1}-u_{n-1}}{2h} + 0(h^2)
 \end{split}
-\end{equation*}
+\end{equation}
 and so
-\begin{equation*}
+\begin{equation}
 \begin{split}
     \frac{u_{n+1}-u_{n-1}}{2h} &= 0 \\
     u_{n+1} &= u_{n-1}
 \end{split}
-\end{equation*}
+\end{equation}
 resulting in
-\begin{equation*}
+\begin{equation}
     \frac{d u_n}{d\tau} = \frac{2u_{n-1} - 2u_n}{h^2}  \hspace{0.8cm} i = n
-\end{equation*}
+\end{equation}
 
 \noindent
 Therefore, the equations that we need are
-\begin{equation*}
+\begin{equation}
 \begin{split}
     \frac{d u_1}{d\tau} &= \frac{\alpha(\tau) - 2u_1 + u_{2}}{h^2}  \hspace{0.8cm} i = 1 \\
     \frac{d u_i}{d\tau} &= \frac{u_{i-1} - 2u_i + u_{i+1}}{h^2}  \hspace{0.8cm} i = 2, ..., n-1    \\
     \frac{d u_n}{d\tau} &= \frac{2u_{n-1} - 2u_n}{h^2}  \hspace{0.8cm} i = n
 \end{split}
-\end{equation*}
+\end{equation}
 These can be written in the form
-\begin{equation*}
+\begin{equation}
     \frac{d u}{d \tau} = Au + b(\tau), \hspace{0.8cm} u(0) = u_0
-\end{equation*}
+\end{equation}
 where A is a $n$ x $n$ matrix, u is a $n$ x 1 vector, b($\tau$) is a $n$ x 1 vector and $u_0$ is a $n$ x 1 vector:
-\begin{equation*}
+\begin{equation}
     A = \frac{1}{h^2} 
 \begin{bmatrix}
     -2     &  1     &  0     &  0     & \dots  &  0     \\
@@ -229,9 +229,9 @@ where A is a $n$ x $n$ matrix, u is a $n$ x 1 vector, b($\tau$) is a $n$ x 1 vec
     0      & \dots  &  0     &  1     & -2     &  1     \\
     0      & \dots  &  0     &  0     &  2     & -2
 \end{bmatrix}
-\end{equation*}
+\end{equation}
 and
-\begin{equation*}
+\begin{equation}
   b(\tau) = \frac{1}{h^2} 
   \begin{bmatrix}
     \alpha(\tau) \\
@@ -240,9 +240,9 @@ and
     \vdots                   \\
     0
   \end{bmatrix}
-\end{equation*}
+\end{equation}
 and
-\begin{equation*}
+\begin{equation}
   u_0 =
   \begin{bmatrix}
   % 1      \\ % u(0,\tau) isn't part of the u vector so shouldn't be included
@@ -252,10 +252,20 @@ and
     \vdots \\
     0
   \end{bmatrix}
-\end{equation*}
+\end{equation}
 
 
 \section{Results}
+
+For parabolic problems solved with explicit method requires the stability condition:
+\begin{equation}
+    \Delta t \leq 0.5 \cdot \Delta x^2
+\end{equation}
+Semidiscretizations of parabolic equations are stiff ODEs, as the timestep is severely restricted, i.e. since stepsize is already small, the timestep has to be much smaller. Figure~\ref{stable_solution} and Figure~\ref{unstable_solution} show the stable and unstable solutions, respectively. A stepsize $h$ of 0.1 is chosen. In the stable solution, we assign $\Delta t / h^2 = 0.5$ so the timestep is $\Delta t =  0.005$. In the unstable solution, we assign $\Delta t / h^2 = 1.0$ so the timestep is $\Delta t =  0.01$.  \\ 
+
+\noindent
+Figure~\ref{2dplots} shows the temperature profiles along the rod when $\tau = 0.5, 1, 1.5, 2$. For $\tau$ up to 1, the temperature increases; whereas for $\tau > 1$, the temperature decreases. The behavior complies with the boundary conditions described in Equation~\ref{BC}.
+
 \begin{figure}
   \centering
   \begin{tikzpicture}
@@ -272,6 +282,7 @@ and
   \end{tikzpicture}
   \caption{Stable plot with $\Delta t = 0.005$, $\Delta x = 0.1$ and the
     Courant number $0.5$.}
+    \label{stable_solution}
 \end{figure}
 
 \begin{figure}
@@ -290,6 +301,7 @@ and
   \end{tikzpicture}
   \caption{Unstable plot with $\Delta t = 0.01$, $\Delta x = 0.1$ and the
     Courant number $1$.}
+    \label{unstable_solution}
 \end{figure}
 
 \begin{figure}
@@ -309,8 +321,21 @@ and
     \end{axis}
   \end{tikzpicture}
   \caption{Solution at $\tau = 0.5$, $\tau = 1$, $\tau = 1.5$, $\tau = 2$}
+    \label{2dplots}
 \end{figure}
 
-\section{Comparing matlab solvers}
+\section{Using MATLAB Solvers}
+
+The ODE problem is then solved with two MATLAB solvers: the explicit method ode23 and the implicit method ode23s which is suitable for stiff problems. Three stepsizes $h$ are taken corresponding to gridpoints $N = 10, 20, 40$ and $\tau$ of 0 to 2 is the time interval. The following table is the comparison of number of time steps, CPU time and maximal stepsize each method could take:
+
+The number of time steps for the implicit solver (ode23s) is smaller than for the explicit solver (ode23). As the explicit solver requires more time steps for large numbers of stepsizes, the CPU time is longer. It is to fullfill the stability criteria. On the other hand, implicit method is unconditionally stable for every time step. 
+
 \pgfplotstabletypeset[col sep=semicolon]{part4_solver_comparison.csv}
+
+\section{Optimized MATLAB Solvers}
+
+ode23s is more efficient in solving the stiff problem as compared to ode23s. It solved a linear systems of equations in order to compute the next time step. In our problem, we have a system matrix of equations which is tridiagonal, and so it should be faster to solve the linear system. However, this is not taken advantage of when implementing ode23s. Therefore, we can set an option to ode23s with odeset to change the way the linear system is being solved. We can either use 'Jacobian' or 'Jpattern'. 'Jacobian' means jacobian is a function of time and a function of PDE, while 'Jpattern' means the jacobian is a sparse matrix.
+
+The number of time steps and the maximal stepsize are the same, only the CPU time would change. The following table shows that the CPU time is smaller using ...
 \end{document}
+
