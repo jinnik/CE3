@@ -131,28 +131,30 @@ with expression $a$ as
 and assuming $a$ has a numerical value of 1.
 
 \section{Discretization}
-\tikzstyle{circ} = [circle, draw, fill=blue!20]
-\tikzstyle{line} = [draw, -latex']
-\begin{figure}
-  \centering
-  \begin{tikzpicture}[node distance = 2cm, auto]
-    \node [circ              , label={below:$u_{i-1}^{j}$}] (i-1) {};
-    \node [circ, right of=i-1, label={below:$u_{i}^{j}$} ] (i)   {};
-    \node [circ, right of=i  , label={below:$u_{i+1}^{j}$}] (i+1) {};
-    \node [circ, above of=i  , label={above:$u_{i}^{j+1}$}] (j)   {};
-    \draw (i-1) -- (i) -- (i+1);
-    \draw (i) -- (j);
-  \end{tikzpicture}
-  \caption{Schematic overview of points used in the method. $u_{i}^{j+1}$ can
-    be calculated using the other three points.}
-  \label{fig:stencil}
-\end{figure}
-
 
 The semidiscretization approach is used. Using constant stepsize $h$ and space discretization into $n$ space:
 \begin{equation}
     \xi_i = i \cdot h \hspace{0.8cm} \text{where}  \hspace{0.8cm} 1 \leq i \leq n 
 \end{equation}
+The discretized grid of the $\xi$-axis and how the gridpoints are numbered are shown in Figure~\ref{discret}.
+\tikzstyle{circ} = [circle, draw, fill=blue!20]
+\tikzstyle{line} = [draw, -latex']
+\begin{figure}[!h]
+  \centering
+  \begin{tikzpicture}[node distance = 2cm, auto]
+    \node [circ              , label={below:$\xi_{1}=0$}] (xi1) {};
+    \node [circ, right of=xi1, label={below:$\xi_{i}$} ] (xi2)   {};
+    \node [circ, right of=xi2, label={below:$...$}] (xi3) {};
+    \node [circ, right of=xi3  , label={below:$...$}] (xi4) {};
+    \node [circ, right of=xi4  , label={below:$\xi_{n}=1$}] (xin) {};
+    \node [circ, right of=xin  , label={below:$\xi_{n+1}$}] (xin+1) {};
+    \draw (xi1) -- (xi2) -- (xi3) -- (xi4) -- (xin);
+    \draw[dashed] (xin) -- (xin+1);
+  \end{tikzpicture}
+  \caption{Schematic overview of discretized grids used in the method.}
+  \label{discret}
+\end{figure}
+
 We approximate
 \begin{equation}
     u_i(\tau) \approx u(\xi_i,\tau)
@@ -261,10 +263,29 @@ For parabolic problems solved with explicit method requires the stability condit
 \begin{equation}
     \Delta t \leq 0.5 \cdot \Delta x^2
 \end{equation}
-Semidiscretizations of parabolic equations are stiff ODEs, as the timestep is severely restricted, i.e. since stepsize is already small, the timestep has to be much smaller. Figure~\ref{stable_solution} and Figure~\ref{unstable_solution} show the stable and unstable solutions, respectively. A stepsize $h$ of 0.1 is chosen. In the stable solution, we assign $\Delta t / h^2 = 0.5$ so the timestep is $\Delta t =  0.005$. In the unstable solution, we assign $\Delta t / h^2 = 1.0$ so the timestep is $\Delta t =  0.01$.  \\ 
+Semidiscretizations of parabolic equations are stiff ODEs, as the timestep is severely restricted, i.e. since stepsize is already small, the timestep has to be much smaller. Figure~\ref{stable_solution_0} and Figure~\ref{stable_solution} show the stable solution while Figure~\ref{unstable_solution} show the unstable solution. A stepsize $h$ of 0.1 is chosen. In the stable solutions, we assign $\Delta t / h^2 = 0.3$ and $0.5$ respectively so the timesteps are $\Delta t =  0.003$ and $0.005$. We can see that both the ratios of $\Delta t / h^2$ of less than as well as equals 0.5 produce stable solutions. In the unstable solution, we assign $\Delta t / h^2 = 1.0$ so the timestep is $\Delta t =  0.01$.  \\ 
 
 \noindent
 Figure~\ref{2dplots} shows the temperature profiles along the rod when $\tau = 0.5, 1, 1.5, 2$. For $\tau$ up to 1, the temperature increases; whereas for $\tau > 1$, the temperature decreases. The behavior complies with the boundary conditions described in Equation~\ref{BC}.
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}
+      [
+        xlabel style = {sloped},
+        ylabel style = {sloped},
+        xlabel = {Dimensionless time},
+        ylabel = {Dimensionless space},
+        zlabel = {Dimensionless temperature},
+      ]
+      \addplot3 [surf, mesh/ordering=y varies] table {part3_stable_plot_0.csv};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Stable plot with $\Delta t = 0.003$, $\Delta x = 0.1$ and the
+    Courant number $0.3$.}
+    \label{stable_solution_0}
+\end{figure}
 
 \begin{figure}
   \centering
@@ -326,9 +347,9 @@ Figure~\ref{2dplots} shows the temperature profiles along the rod when $\tau = 0
 
 \section{Using MATLAB Solvers}
 
-The ODE problem is then solved with two MATLAB solvers: the explicit method ode23 and the implicit method ode23s which is suitable for stiff problems. Three stepsizes $h$ are taken corresponding to gridpoints $N = 10, 20, 40$ and $\tau$ of 0 to 2 is the time interval. The following table is the comparison of number of time steps, CPU time and maximal stepsize each method could take:
+The ODE problem is then solved with two MATLAB solvers: the explicit method \texttt{ode23} and the implicit method/stiff method \texttt{ode23s} which is suitable for stiff problems. Three stepsizes $h$ are taken corresponding to gridpoints $N = 10, 20, 40$ and $\tau$ of 0 to 2 is the time interval. The following table is the comparison of number of time steps, CPU time and maximal stepsize each method could take:
 
-The number of time steps for the implicit solver (ode23s) is smaller than for the explicit solver (ode23). As the explicit solver requires more time steps for large numbers of stepsizes, the CPU time is longer. It is to fullfill the stability criteria. On the other hand, implicit method is unconditionally stable for every time step. 
+The number of time steps for the implicit solver (\texttt{ode23s}) is smaller than for the explicit solver (\texttt{ode23}). As the explicit solver requires more time steps for large numbers of stepsizes, the CPU time is longer. It is to fullfill the stability criteria. On the other hand, implicit method is unconditionally stable for every time step. 
 \begin{table}[!h]
  \caption{Comparison of ode23 and ode23s with a relative tolerance of $10^{-6}$ and an absolute tolerance of $10^{-6}$.}
 \pgfplotstabletypeset[col sep=semicolon]{part4_solver_comparison.csv}
@@ -336,7 +357,7 @@ The number of time steps for the implicit solver (ode23s) is smaller than for th
 
 \section{Optimized MATLAB Solvers}
 
-ode23s is more efficient in solving the stiff problem as compared to ode23. It solved a linear systems of equations in order to compute the next time step. In our problem, we have a system matrix of equations which is tridiagonal, and so it should be faster to solve the linear system. However, this is not taken advantage of when implementing ode23s. Therefore, we can set an option to ode23s with odeset to change the way the linear system is being solved. We can either use 'Jacobian' or 'Jpattern'. 'Jacobian' means jacobian is a function of time and a function of PDE, while 'Jpattern' means the jacobian is a sparse matrix.
+\texttt{ode23s} is more efficient in solving the stiff problem as compared to \texttt{ode23}. \texttt{ode23s} solved a linear systems of equations in order to compute the next time step. In our problem, we have a system matrix of equations which is tridiagonal, and so it should be faster to solve the linear system. However, this is not taken advantage of when implementing \texttt{ode23s}. Therefore, we can set an option to \texttt{ode23s} with \texttt{odeset} to change the way the linear system is being solved. We can either use '\texttt{Jacobian}' or '\texttt{Jpattern}'. '\texttt{Jacobian}' means jacobian is a function of time and a function of PDE, while '\texttt{Jpattern}' means the jacobian is a sparse matrix.
 
 The number of time steps and the maximal stepsize are the same, only the CPU time would change. The following table shows that the CPU time is smaller using ...
 \end{document}
