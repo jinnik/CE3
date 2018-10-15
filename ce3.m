@@ -75,15 +75,15 @@ disp(' ')
 solvers = {'ode23', 'ode23s'};
 delete('part4_solver_comparison.csv')
 custom_fprintf('part4_solver_comparison.csv', '%s;%s;%s;%s;%s;%s;%s\r\n', ...
-               'N', [solvers{1} ' timesteps'], [solvers{2} ' timesteps'], ...
-               [solvers{1} ' CPU-time'], [solvers{2} ' CPU-time'], ...
-               [solvers{1} ' Delta tmax'], [solvers{2} ' Delta tmax'])
-options = odeset('RelTol',1e-6, 'AbsTol',1e-6);
+               'N', [solvers{1} ' timesteps'], [solvers{2} ' timesteps'], [solvers{3} ' timesteps'], ...
+               [solvers{1} ' CPU-time'], [solvers{2} ' CPU-time'], [solvers{3} ' CPU-time'], ...
+               [solvers{1} ' Delta tmax'], [solvers{2} ' Delta tmax'], [solvers{3} ' Delta tmax'])
 for N_x = [10 20 40]
+    options = odeset('RelTol',1e-6, 'AbsTol',1e-6);
     [~, ~, du] = build_A_du(N_x);
     u_0 = zeros(N_x,1);
-    time = zeros(1,2);
-    T = {[], []}; Y = {[], []};
+    time = zeros(1,3);
+    T = {[], [], []}; Y = {[], [], []};
     i = 1;
     for solver = solvers
         tic
@@ -93,7 +93,13 @@ for N_x = [10 20 40]
         time(i) = toc;
         i = i+1;
     end
-    custom_fprintf('part4_solver_comparison.csv', '%d;%d;%d;%f;%f;%f;%f\r\n', ...
-                   N_x, length(T{1}), length(T{2}), ...
-            time(1), time(2), max(diff(T{1})), max(diff(T{2})));
+    [A, ~, du] = build_A_du(N_x, 'sparse');
+    options = odeset('RelTol', 1e-6, 'AbsTol', 1e-6, 'Jpattern', A);
+    tic
+    [T{3}, Y{3}] = ode23s(du, [0 2], u_0, options);
+    time(3) = toc;
+
+    custom_fprintf('part4_solver_comparison.csv', '%d;%d;%d;%d;%f;%f;%f;%f;%f;%f\r\n', ...
+                   N_x, length(T{1}), length(T{2}), length(T{3}), time(1), time(2), time(3), ...
+                   max(diff(T{1})), max(diff(T{2})), max(diff(T{3})));
 end
