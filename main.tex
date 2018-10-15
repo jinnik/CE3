@@ -259,7 +259,7 @@ and
 
 \section{Results}
 
-For parabolic problems solved with explicit method requires the stability condition:
+The code to solve the described problem is in Appendix. For parabolic problems solved with explicit method requires the stability condition:
 \begin{equation}
     \Delta t \leq 0.5 \cdot \Delta x^2
 \end{equation}
@@ -349,16 +349,40 @@ Figure~\ref{2dplots} shows the temperature profiles along the rod when $\tau = 0
 
 The ODE problem is then solved with two MATLAB solvers: the explicit method \texttt{ode23} and the implicit method/stiff method \texttt{ode23s} which is suitable for stiff problems. Three stepsizes $h$ are taken corresponding to gridpoints $N = 10, 20, 40$ and $\tau$ of 0 to 2 is the time interval. The following table is the comparison of number of time steps, CPU time and maximal stepsize each method could take:
 
-The number of time steps for the implicit solver (\texttt{ode23s}) is smaller than for the explicit solver (\texttt{ode23}). As the explicit solver requires more time steps for large numbers of stepsizes, the CPU time is longer. It is to fullfill the stability criteria. On the other hand, implicit method is unconditionally stable for every time step. 
+The number of time steps for \texttt{ode23s} is smaller than for \texttt{ode23}. \texttt{ode23} requires more time steps for large numbers of stepsizes to fullfill the stability criteria. On the other hand, \texttt{ode23s} is unconditionally stable for every time step. Therefore, the maximum time stepsize is bigger than the non-stiff method \texttt{ode23}.
 \begin{table}[!h]
  \caption{Comparison of ode23 and ode23s with a relative tolerance of $10^{-6}$ and an absolute tolerance of $10^{-6}$.}
-\pgfplotstabletypeset[col sep=semicolon]{part4_solver_comparison.csv}
+  \resizebox{\textwidth}{!}{
+   \pgfplotstabletypeset[col sep=semicolon]{part4_solver_comparison.csv}
+}
 \end{table}
 
 \section{Optimized MATLAB Solvers}
 
 \texttt{ode23s} is more efficient in solving the stiff problem as compared to \texttt{ode23}. \texttt{ode23s} solved a linear systems of equations in order to compute the next time step. In our problem, we have a system matrix of equations which is tridiagonal, and so it should be faster to solve the linear system. However, this is not taken advantage of when implementing \texttt{ode23s}. Therefore, we can set an option to \texttt{ode23s} with \texttt{odeset} to change the way the linear system is being solved. We can either use '\texttt{Jacobian}' or '\texttt{Jpattern}'. '\texttt{Jacobian}' means jacobian is a function of time and a function of PDE, while '\texttt{Jpattern}' means the jacobian is a sparse matrix.
 
-The number of time steps and the maximal stepsize are the same, only the CPU time would change. The following table shows that the CPU time is smaller using ...
+The number of time steps and the maximal stepsize are the same, only the CPU time would change. The following table shows that the CPU time is smaller using ........? (CHECK!!)
+
+\section{Conclusion}
+
+The conclusions that can be drawn are:
+\begin{itemize}
+    \item Stiff method or implicit method (in this case \texttt{ode23s}) should be used for parabolic problems as compared to non-stiff or explicit method. The semi-discretization using center difference method in space discretization of order 2 yields a linear system oof ODEs. The resulting matrix is a tridiagonal matrix with very different sizes of real eigenvalues. That is why, stiff method is better to solve this kind of parabolic problems when method of lines is used.
+    \item The jacobian of the ODE-system is a sparse banded matrix. Most of the elements are zero (therefore, sparse). The non-zero entities are confined to a diagonal band and the bandwidth is relatively small (therefore, band/banded), in this case a tridiagonal matrix. That is, due to the center difference method, each point on the discretized space takes into account the neighbouring points (before and after). Being a sparse banded tridiagonal matrix, it is important that this structure is taken into consideration when solving for high efficiency. Using \texttt{Jacobian} and \texttt{Jpattern}, the solving time can be reduced as the jacobian is given and no computational effort has to be put to solve it numerically. \texttt{Jacobian} gives the jacobian as a sparse matrix while \texttt{Jpattern} set the structure of the jacobian as sparse ........? (CHECK!!)
+\end{itemize}
+
+\section{Appendix}
+
+\subsection{ce3.m}
+\lstinputlisting{ce3.m}
+\subsection{build\_A\_du.m}
+\lstinputlisting{build_A_du.m}
+\subsection{print3\_data.m}
+\lstinputlisting{print3_data.m}
+\subsection{print\_data.m}
+\lstinputlisting{print_data.m}
+\subsection{custom\_fprintf.m}
+\lstinputlisting{custom_fprintf.m}
+
 \end{document}
 
