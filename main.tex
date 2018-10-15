@@ -92,7 +92,7 @@ $\kappa$ is the thermal conductivity [\si{\joule\per\meter\per\second\per\kelvin
     \frac{\partial^2 T}{\partial x^2} &= \frac{T_0}{L^2} \frac{\partial^2 u}{\partial \xi^2}
 \end{split}
 \end{equation}
-Rewrite Equation~\ref{eq1} into
+Rewrite \cref{eq1} into
 \begin{equation}
 \begin{split}
     \rho c_p \frac{\partial u}{\partial \tau} &= \kappa \frac{T_0}{L^2} \frac{\partial^2 u}{\partial \xi^2} \\
@@ -124,7 +124,7 @@ with expression $a$ as
 \begin{equation}
 \begin{split}
     a &= \frac{\kappa t_P}{\rho c_p L^2} \\
-    [a] &= \si{\joule\per\meter\per\second\per\kelvin\second\meter\cubed\per\kilo\gram\kilo\gram\kelvin\per\joule}%\frac{J}{m \cdot s \cdot C} \cdot s \cdot \frac{m^3}{kg} \frac{kg \cdot C}{J} \frac{1}{m^2} 
+    [a] &= \si{\joule\per\meter\per\second\per\kelvin\second\meter\cubed\per\kilo\gram\kilo\gram\kelvin\per\joule}
     = 1
 \end{split}
 \end{equation}
@@ -134,22 +134,27 @@ and assuming $a$ has a numerical value of 1.
 
 The semidiscretization approach is used. Using constant stepsize $h$ and space discretization into $n$ space:
 \begin{equation}
-    \xi_i = i \cdot h \hspace{0.8cm} \text{where}  \hspace{0.8cm} 1 \leq i \leq n 
+    \xi_i = i \cdot h \hspace{0.8cm} \text{where}  \hspace{0.8cm} 0 \leq i \leq n+1 
 \end{equation}
-The discretized grid of the $\xi$-axis and how the gridpoints are numbered are shown in Figure~\ref{discret}.
+The discretized grid of the $\xi$-axis and how the gridpoints are numbered are
+shown in \cref{discret}. $\xi_{0}=\alpha(\tau)$ is the boundary condition used at
+the left-most point and is not part of the $u$-vector that is solved for. 
 \tikzstyle{circ} = [circle, draw, fill=blue!20]
 \tikzstyle{line} = [draw, -latex']
 \begin{figure}[!h]
   \centering
-  \begin{tikzpicture}[node distance = 2cm, auto]
-    \node [circ              , label={below:$\xi_{1}=0$}] (xi1) {};
-    \node [circ, right of=xi1, label={below:$\xi_{i}$} ] (xi2)   {};
-    \node [circ, right of=xi2, label={below:$...$}] (xi3) {};
-    \node [circ, right of=xi3  , label={below:$...$}] (xi4) {};
-    \node [circ, right of=xi4  , label={below:$\xi_{n}=1$}] (xin) {};
-    \node [circ, right of=xin  , label={below:$\xi_{n+1}$}] (xin+1) {};
-    \draw (xi1) -- (xi2) -- (xi3) -- (xi4) -- (xin);
+  \begin{tikzpicture}[node distance = 1.5cm, auto]
+    \node [circ              , label={below:$\xi_{1}$}] (xi1) {};
+    \node [circ, left of=xi1 , label={below:$\xi_{0}$}] (xi0) {};
+    \node [circ, right of=xi1, label={below:$\xi_{2}$} ] (xi2)   {};
+    \node [circ, right of=xi2, label={below:$\ldots$} ] (xii)   {};
+    \node [circ, right of=xii, label={below:$\xi_{i}$}] (xi3) {};
+    \node [circ, right of=xi3  , label={below:$\ldots$}] (xi4) {};
+    \node [circ, right of=xi4  , label={below:$\xi_{N}=1$}] (xin) {};
+    \node [circ, right of=xin  , label={below:$\xi_{N+1}$}] (xin+1) {};
+    \draw (xi1) -- (xi2) -- (xii) -- (xi3) -- (xi4) -- (xin);
     \draw[dashed] (xin) -- (xin+1);
+    \draw[dashed] (xi1) -- (xi0);
   \end{tikzpicture}
   \caption{Schematic overview of discretized grids used in the method.}
   \label{discret}
@@ -263,10 +268,10 @@ The code to solve the described problem is in Appendix. For parabolic problems s
 \begin{equation}
     \Delta t \leq 0.5 \cdot \Delta x^2
 \end{equation}
-Semidiscretizations of parabolic equations are stiff ODEs, as the timestep is severely restricted, i.e. since stepsize is already small, the timestep has to be much smaller. Figure~\ref{stable_solution_0} and Figure~\ref{stable_solution} show the stable solution while Figure~\ref{unstable_solution} show the unstable solution. A stepsize $h$ of 0.1 is chosen. In the stable solutions, we assign $\Delta t / h^2 = 0.3$ and $0.5$ respectively so the timesteps are $\Delta t =  0.003$ and $0.005$. We can see that both the ratios of $\Delta t / h^2$ of less than as well as equals 0.5 produce stable solutions. In the unstable solution, we assign $\Delta t / h^2 = 1.0$ so the timestep is $\Delta t =  0.01$.  \\ 
+Semidiscretizations of parabolic equations are stiff ODEs, as the timestep is severely restricted, i.e. since stepsize is already small, the timestep has to be much smaller. \cref{stable_solution_0} and \cref{stable_solution} show the stable solution while \cref{unstable_solution} show the unstable solution. A stepsize $h$ of 0.1 is chosen. In the stable solutions, we assign $\Delta t / h^2 = 0.3$ and $0.5$ respectively so the timesteps are $\Delta t =  0.003$ and $0.005$. We can see that both the ratios of $\Delta t / h^2$ of less than as well as equals 0.5 produce stable solutions. In the unstable solution, we assign $\Delta t / h^2 = 1.0$ so the timestep is $\Delta t =  0.01$.  \\ 
 
 \noindent
-Figure~\ref{2dplots} shows the temperature profiles along the rod when $\tau = 0.5, 1, 1.5, 2$. For $\tau$ up to 1, the temperature increases; whereas for $\tau > 1$, the temperature decreases. The behavior complies with the boundary conditions described in Equation~\ref{BC}.
+\cref{2dplots} shows the temperature profiles along the rod when $\tau = 0.5, 1, 1.5, 2$. For $\tau$ up to 1, the temperature increases; whereas for $\tau > 1$, the temperature decreases. The behavior complies with the boundary conditions described in \cref{BC}.
 
 \begin{figure}
   \centering
@@ -347,28 +352,77 @@ Figure~\ref{2dplots} shows the temperature profiles along the rod when $\tau = 0
 
 \section{Using MATLAB Solvers}
 
-The ODE problem is then solved with two MATLAB solvers: the explicit method \texttt{ode23} and the implicit method/stiff method \texttt{ode23s} which is suitable for stiff problems. Three stepsizes $h$ are taken corresponding to gridpoints $N = 10, 20, 40$ and $\tau$ of 0 to 2 is the time interval. The following table is the comparison of number of time steps, CPU time and maximal stepsize each method could take:
+The ODE problem is then solved with two MATLAB solvers: the explicit method
+\texttt{ode23} and the implicit method/stiff method \texttt{ode23s} which is
+suitable for stiff problems. Three stepsizes $h$ are taken corresponding to
+gridpoints $N = 10, 20, 40$ and $\tau$ of 0 to 2 is the time interval. The
+following table is the comparison of number of time steps, CPU time and
+maximal stepsize each method would take.
 
-The number of time steps for \texttt{ode23s} is smaller than for \texttt{ode23}. \texttt{ode23} requires more time steps for large numbers of stepsizes to fullfill the stability criteria. On the other hand, \texttt{ode23s} is unconditionally stable for every time step. Therefore, the maximum time stepsize is bigger than the non-stiff method \texttt{ode23}.
+The number of time steps for \texttt{ode23s} is smaller than for
+\texttt{ode23}. \texttt{ode23} requires more time steps for large numbers of
+stepsizes to fullfill the stability criteria. On the other hand,
+\texttt{ode23s} is unconditionally stable for every time step. Therefore, the
+maximum time stepsize is bigger than the non-stiff method \texttt{ode23}.
 \begin{table}[!h]
- \caption{Comparison of ode23 and ode23s with a relative tolerance of $10^{-6}$ and an absolute tolerance of $10^{-6}$.}
-  \resizebox{\textwidth}{!}{
-   \pgfplotstabletypeset[col sep=semicolon]{part4_solver_comparison.csv}
-}
+ \caption{Comparison of ode23, ode23s and the ode23s solution using a sparse
+   Jacobian. The relative tolerance is set to $10^{-6}$ and the absolute
+   tolerance to $10^{-6}$ for all solutions.}
+ \label{tab:solution}
+ \pgfplotstableread[col sep=semicolon, string type]{part4_solver_comparison.csv}{\partfour}
+ \pgfplotstabletranspose[colnames from=N, input colnames to=N,string type]\partfourtransposed{\partfour}
+ \centering\pgfplotstabletypeset[every nth row={3[-1]}{after row=\midrule},
+   every head row/.style={
+     before row=\toprule,
+     after row=\midrule
+   }, string type, skip first n=4,
+   every last row/.style={
+     after row=\bottomrule
+     },]{\partfourtransposed}
 \end{table}
 
 \section{Optimized MATLAB Solvers}
 
-\texttt{ode23s} is more efficient in solving the stiff problem as compared to \texttt{ode23}. \texttt{ode23s} solved a linear systems of equations in order to compute the next time step. In our problem, we have a system matrix of equations which is tridiagonal, and so it should be faster to solve the linear system. However, this is not taken advantage of when implementing \texttt{ode23s}. Therefore, we can set an option to \texttt{ode23s} with \texttt{odeset} to change the way the linear system is being solved. We can either use '\texttt{Jacobian}' or '\texttt{Jpattern}'. '\texttt{Jacobian}' means jacobian is a function of time and a function of PDE, while '\texttt{Jpattern}' means the jacobian is a sparse matrix.
+\texttt{ode23s} is more efficient in solving the stiff problem as compared to
+\texttt{ode23}. \texttt{ode23s} solved a linear systems of equations in order
+to compute the next time step. In our problem, we have a system matrix of
+equations which is tridiagonal, and so it should be faster to solve the linear
+system. However, this is not taken advantage of when implementing
+\texttt{ode23s}. Therefore, we can set an option to \texttt{ode23s} with
+\texttt{odeset} to change the way the linear system is being solved. We can
+either use '\texttt{Jacobian}' or '\texttt{Jpattern}'. '\texttt{Jacobian}'
+can be used to specify a function that calculates the jacobian as a function
+of time and the spatial variable, while '\texttt{Jpattern}' can be used to
+give a sparse matrix containing the jacobian entries.
 
-The number of time steps and the maximal stepsize are the same, only the CPU time would change. The following table shows that the CPU time is smaller using ........? (CHECK!!)
+The number of time steps and the maximal stepsize are the same, only the CPU
+time would change. \cref{tab:solution} shows that the CPU time is considerably
+smaller when using ode23s with the '\texttt{Jpatten}' sparse matrix, compared
+to when using ode23 out of the box.
 
 \section{Conclusion}
 
 The conclusions that can be drawn are:
 \begin{itemize}
-    \item Stiff method or implicit method (in this case \texttt{ode23s}) should be used for parabolic problems as compared to non-stiff or explicit method. The semi-discretization using center difference method in space discretization of order 2 yields a linear system oof ODEs. The resulting matrix is a tridiagonal matrix with very different sizes of real eigenvalues. That is why, stiff method is better to solve this kind of parabolic problems when method of lines is used.
-    \item The jacobian of the ODE-system is a sparse banded matrix. Most of the elements are zero (therefore, sparse). The non-zero entities are confined to a diagonal band and the bandwidth is relatively small (therefore, band/banded), in this case a tridiagonal matrix. That is, due to the center difference method, each point on the discretized space takes into account the neighbouring points (before and after). Being a sparse banded tridiagonal matrix, it is important that this structure is taken into consideration when solving for high efficiency. Using \texttt{Jacobian} and \texttt{Jpattern}, the solving time can be reduced as the jacobian is given and no computational effort has to be put to solve it numerically. \texttt{Jacobian} gives the jacobian as a sparse matrix while \texttt{Jpattern} set the structure of the jacobian as sparse ........? (CHECK!!)
+    \item Stiff method or implicit method (in this case \texttt{ode23s})
+      should be used for parabolic problems as compared to non-stiff or
+      explicit method. The semi-discretization using center difference method
+      in space discretization of order 2 yields a linear system oof ODEs. The
+      resulting matrix is a tridiagonal matrix with very different sizes of
+      real eigenvalues. That is why, stiff method is better to solve this kind
+      of parabolic problems when method of lines is used.
+      
+    \item The jacobian of the ODE-system is a sparse banded matrix. Most of
+      the elements are zero (therefore, sparse). The non-zero entities are
+      confined to a diagonal band and the bandwidth is relatively small
+      (therefore, band/banded), in this case a tridiagonal matrix. That is,
+      due to the center difference method, each point on the discretized space
+      takes into account the neighbouring points (before and after). Being a
+      sparse banded tridiagonal matrix, it is important that this structure is
+      taken into consideration when solving for high efficiency. Using
+      \texttt{Jacobian} and \texttt{Jpattern}, the solving time can be reduced
+      as the jacobian is given and no computational effort has to be put to
+      solve it numerically. 
 \end{itemize}
 
 \section{Appendix}
